@@ -1,0 +1,41 @@
+.f-notification-popup{
+    background-color: transparent;
+    min-width: 1rem; 
+    min-height: 1rem;
+}
+.f-notification-popup-box{
+  background-color:rgba(232,232,232,0.6);
+  border:1px solid rgba(232,232,232,0.65);
+  border-radius:1rem;
+  -gtk-outline-radius:1rem;
+  padding:0.5rem;
+  margin-bottom: 0.3rem;
+  min-width: 28rem; 
+  min-height: 3.8rem;
+  color:#000;
+}
+
+.notif-icon {
+  border-radius: 0.5rem;
+  min-width: 3.409rem;
+  min-height: 3.409rem; 
+  margin-right: 0.5rem;
+}
+
+.txt-small {
+  font-family: 'AR One Sans', 'Geist', 'Inter', 'Roboto', 'Noto Sans', sans-serif;
+  font-size: 1.0909rem; }
+
+.txt-semibold {
+  font-weight: 500; }
+
+.titlefont {
+    font-family: 'Gabarito', 'Lexend', sans-serif;
+ }
+.txt-smaller {
+  font-family: 'AR One Sans', 'Geist', 'Inter', 'Roboto', 'Noto Sans', sans-serif;
+  font-size: 0.9091rem; 
+}
+.u-notcie-end{
+  margin-right: 0.3rem;
+}

@@ -1,0 +1,18 @@
+/* .f-row1{ */
+/*   background-color:#ccc; */
+/* } */
+.f-clock-widget{
+  min-width:10rem;
+  min-height:10rem;
+  padding:1rem;
+  background-color:rgba(0,0,0,0.8);
+  border-radius:1.5rem;
+}
+
+/* .f-sys{ */
+/*   background-color:#000; */
+/* } */
+/**/
+/* .f-center{ */
+/*   min-width:30rem; */
+/* } */
