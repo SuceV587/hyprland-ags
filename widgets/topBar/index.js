@@ -6,6 +6,7 @@ import { find_icon } from "../../lib/iconUtils.js";
 
 const workspaceSort = [" 1Dock", " 2Code", " 3Chat", " 4Vmware", " 5Other1", " 6Other2", "7󰨇 monitor0"]
 
+
 const topBar = function(monitor = 1) {
   const left = Widget.Box({
     className: 'u-left-bar',

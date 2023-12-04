@@ -8,11 +8,11 @@ window{
   color: #fff;
 }
 .u-left-bar{
-  font-family:'JetBrains,JetBrains Mono,PingFang-Regular';
+  font-family:'PingFang-Regular,JetBrains,JetBrains Mono';
   font-size: 1rem;
   font-weight: 600;
   margin-left: 1rem;
-  letter-spacing:1px;
+  /* letter-spacing:1px; */
 }
 
 .u-right-bar{
@@ -20,7 +20,7 @@ window{
 }
 .u-systray{
   margin-right: 1rem;
-  background-color:rgba(255, 255, 255, 0.2);
+  background-color:rgba(255, 255, 255, 0.1);
   border-radius: 2rem;
 }
 .u-systray >button{

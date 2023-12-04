@@ -1,18 +1,28 @@
-/* .f-row1{ */
-/*   background-color:#ccc; */
-/* } */
 .f-clock-widget{
   min-width:10rem;
   min-height:10rem;
-  padding:1rem;
   background-color:rgba(0,0,0,0.8);
   border-radius:1.5rem;
 }
 
-/* .f-sys{ */
-/*   background-color:#000; */
-/* } */
-/**/
-/* .f-center{ */
-/*   min-width:30rem; */
-/* } */
+.f-battery{
+  background-color: rgba(232,232,232,0.8);
+  border-radius:1.5rem;
+  padding-right:1rem;
+  padding-left:1rem;
+}
+
+
+
+
+
+
+/*----------中间的组件列----------*/
+/*----------中间的组件列----------*/
+.f-desk-center{
+}
+
+/*----------日期组件----------*/
+.f-date-widget{
+  background-color:#fff;
+}

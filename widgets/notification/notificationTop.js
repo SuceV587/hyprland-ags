@@ -19,6 +19,9 @@ const notificationTop = (monitor) => {
 
         const notif = box._map.get(id);
         Utils.timeout(5000, () => {
+          if (notif._destroyed) {
+            return
+          }
           notif.revealChild = false;
         });
       }],
