@@ -7,60 +7,82 @@ import { find_icon } from '../../lib/iconUtils.js'
 
 
 export const battery = (avg_row_px) => {
-  const battery_width = (avg_row_px - 20) * 2.5 / 3
 
   const singleBatterWidget = (percent, icon_name) => {
     const rounded = percent <= 0 ? false : true
-    const battery = Widget.CircularProgress({
-      className: 'u-battery',
-      css:
-        `min-width: ${battery_width}px;` +
-        `min-height :${avg_row_px * 2 / 3}px;` +
-        'font-size: 22px;' +
-        'background-color: #f0f0f0;' +
-        'color: #00C957;',
-      child: Widget.Icon({
-        css: `min-width:${(battery_width - 15) / 3}px;min-height:${(battery_width - 15) / 3}px`,
-        icon: find_icon(icon_name),
-        setup: (self) => Utils.timeout(1, () => {
-          if (self._destroyed) {
-            return
-          }
-          const styleContext = self.get_style_context();
-          const width = styleContext.get_property('min-width', Gtk.StateFlags.NORMAL);
-          const height = styleContext.get_property('min-height', Gtk.StateFlags.NORMAL);
-          self.size = Math.max(width, height, 1);
-        }),
-      }),
-      value: percent / 100,
-      rounded: rounded,
-      inverted: false,
-      startAt: 0.75,
-    });
+
+    const battery = (batteryWidth)=>{ 
+
+      if(batteryWidth < 60){
+        batteryWidth = avg_row_px * 3 / 4
+      }
+
+      const circular= Widget.CircularProgress({
+            className: 'u-battery',
+            css:
+              `min-width:${batteryWidth-60}px;`+
+              `min-height:${batteryWidth-60}px;`+
+              'font-size: 22px;' +
+              'background-color: #f0f0f0;' +
+              'color: #00C957;',
+            child: Widget.Icon({
+              icon: find_icon(icon_name),
+              setup: (self) => Utils.timeout(10, () => {
+                if (self._destroyed) {
+                  return
+                }
+                const iconWidth = (avg_row_px) * 1 / 6
+                self.size = Math.max(iconWidth, iconWidth, 1);
+              }),
+            }),
+            value: percent / 100,
+            rounded: rounded,
+            inverted: false,
+            startAt: 0.75,
+      });
+
+      return  Widget.Box({
+        css:`min-height:${batteryWidth}px;`,
+        hpack:'center',
+        vpack:'center',
+        children:[circular]
+      })
+    }
+
+    const batteryLabel = Widget.Label({
+        css: 'font-size:1rem;font-weight:700;color:#555',
+        label: percent > 0 ? percent + '%' : ''
+    })
 
     const batter_wrap = Widget.Box({
       vertical: true,
       hpack: 'fill',
-      vpack: 'center',
-      children: [
-        battery,
-        Widget.Label({
-          css: 'margin-top:15px;font-size:1rem;font-weight:700;color:#555',
-          label: percent > 0 ? percent + '%' : ''
+      vpack: 'fill',
+      setup:self=>{
+        Utils.timeout(100,()=>{
+          let batteryWidth = self.get_allocated_width();
+          // const batterHeight = self.get_allocated_height()
+          if (batteryWidth <=0){
+            return
+          }
+          batteryWidth =Math.floor(batteryWidth)
+
+          if (typeof batteryWidth !== "number"){
+            return 
+          }
+
+          self.children=[battery(batteryWidth),batteryLabel]
         })
-      ]
-
+      }
     })
-
-
     return batter_wrap
   }
 
 
   const batterWidget = Widget.Box({
     className: 'f-battery',
-    css: `min-width:${avg_row_px * 2.5}px;`,
-    spacing: 20,
+    css: `min-width:${avg_row_px * 3}px;background-color: rgba(232,232,232,0.8);border-radius: 1.5rem;`,
+    homogeneous: true,
     properties: [
       ['update', (box) => {
         const blueDevice = Bluetooth['connected-devices']
@@ -76,7 +98,7 @@ export const battery = (avg_row_px) => {
         })
 
         //凑足四个圈。
-        const supplement = 3 - deviceList.length
+        const supplement = 4 - deviceList.length
         if (supplement > 0) {
           for (let i = 0; i < supplement; i++) {
             deviceList.push({
@@ -85,7 +107,7 @@ export const battery = (avg_row_px) => {
             })
           }
         }
-
+        
         const deviceWidget = []
         deviceList.map(item => {
           deviceWidget.push(singleBatterWidget(item.battery, item.type))
@@ -94,9 +116,10 @@ export const battery = (avg_row_px) => {
       }]
     ],
     //10s更新一下电池电量
-    connections: [[10000, self => {
+    connections: [[60000, self => {
       self._update(self)
     }]],
+
     setup: (self) => {
       Utils.timeout(1000, () => {
         self._update(self)

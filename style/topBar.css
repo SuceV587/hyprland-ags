@@ -8,15 +8,24 @@ window{
   color: #fff;
 }
 .u-left-bar{
-  font-family:'PingFang-Regular,JetBrains,JetBrains Mono';
+  font-family: 'JetBrains Mono Nerd Font', 'JetBrains Mono NL', 'SpaceMono Nerd Font', monospace;
   font-size: 1rem;
-  font-weight: 600;
+  color:#fff;
+  font-weight: 800;
+  min-height: 2.2rem;
   margin-left: 1rem;
   /* letter-spacing:1px; */
 }
 
 .u-right-bar{
+  font-family: 'JetBrains Mono Nerd Font', 'JetBrains Mono NL', 'SpaceMono Nerd Font', monospace;
   background-color:transparent;
+  font-size: 1rem;
+  font-weight: 800;
+  margin-left: 1rem;
+  min-height: 2.2rem;
+  background-color:transparent;
+  color: #fff;
 }
 .u-systray{
   margin-right: 1rem;

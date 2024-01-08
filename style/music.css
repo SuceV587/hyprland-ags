@@ -1,0 +1,30 @@
+.osd-progress {
+    border-radius:1.5rem;
+    border:0;
+    padding:0;
+    margin:0;
+    border-radius: 10rem;
+    border:0;
+    transition: 1000ms cubic-bezier(0.1, 1, 0, 1);
+}
+
+
+.osd-progress trough {
+    min-height:0.4rem;
+    border-radius: 10rem;
+    padding:0;
+    margin:0;
+    border:0;
+    background-color: #999;
+}
+
+.osd-progress progress {
+    min-height:0.4rem;
+    transition: 1000ms cubic-bezier(0.1, 1, 0, 1);
+    border-top-left-radius: 10rem;
+    border-bottom-left-radius:10rem;
+    padding:0;
+    margin:0;
+    border:0;
+    background-color: #fff;
+}

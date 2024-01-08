@@ -1,10 +1,13 @@
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js'
-import { Tray } from "./systray.js";
 import Hyprland from 'resource:///com/github/Aylur/ags/service/hyprland.js';
+import { rightBar } from './rightBar.js'
+import { centerBar  } from "./centerBar.js";
+
+
 import { find_icon } from "../../lib/iconUtils.js";
 
-const workspaceSort = [" 1Dock", " 2Code", " 3Chat", " 4Vmware", " 5Other1", " 6Other2", "7󰨇 monitor0"]
+const workspaceSort = [" 1Dock", " 2Code", " 3Chat", " 4Vmware", " 5Other1", " 6Other2", "7 󰨇 monitor0"]
 
 
 const topBar = function(monitor = 1) {
@@ -21,6 +24,7 @@ const topBar = function(monitor = 1) {
       }),
 
       Widget.Label({
+        className: 'font',
         label: ' ',
         connections: [
           [Hyprland.active.workspace, self => {
@@ -32,29 +36,13 @@ const topBar = function(monitor = 1) {
       })
     ]
   })
-
-
-
-  const centerWidget = null
-  const right = Widget.Box({
-    className: 'f-right-bar',
-    homogeneous: false,
-    hpack: 'end',
-    vpack: 'center',
-    children: [
-      Tray()
-    ],
-  })
-
-
-
   const mainBox = Widget.CenterBox({
     className: 'f-bar',
     spacing: 1,
     vertical: false,
     startWidget: left,
-    centerWidget: centerWidget,
-    endWidget: right,
+    centerWidget: centerBar(),
+    endWidget: rightBar(),
   })
 
 
@@ -63,13 +51,12 @@ const topBar = function(monitor = 1) {
     name: `bar${monitor}`,
     anchor: ['top', 'left', 'right'],
     child: mainBox,
-    exclusive: true,
+    margins:[5,0,2,0],
+    exclusivity: "exclusive",
     layer: 'top'
   })
   return win
-
 }
-
 
 
 export default topBar

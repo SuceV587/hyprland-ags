@@ -5,3 +5,8 @@
 @import url('./dock.css');
 @import url('./notificationTop.css');
 @import url('./desk.css');
+@import url('./music.css');
+
+.font{
+    font-family: 'JetBrains Mono Nerd Font', 'JetBrains Mono NL', 'SpaceMono Nerd Font', monospace;
+}

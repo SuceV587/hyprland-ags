@@ -1,12 +1,10 @@
 
-import topBar from './widgets/topBar/index.js'
+import topBar from './widgets/topBar/topBar.js'
 import App from 'resource:///com/github/Aylur/ags/app.js';
 import Dock from "./widgets/dock/index.js";
 import notificationTop from './widgets/notification/notificationTop.js';
-import deskCenter from './widgets/deskCenter/index.js';
 import Monitors from './lib/monitors.js'
-
-
+import deskCenter from './widgets/deskCenter/index.js'
 
 //定义主屏幕的id
 const mainMonitorId = Monitors.mainMonitorId

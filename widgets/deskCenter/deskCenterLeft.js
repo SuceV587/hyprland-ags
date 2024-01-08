@@ -1,33 +1,54 @@
 
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
-import { clock } from './clock.js';
-import { battery } from './battery.js'
-import monitors from '../../lib/monitors.js';
-import Bluetooth from 'resource:///com/github/Aylur/ags/service/bluetooth.js';
-import Battery from 'resource:///com/github/Aylur/ags/service/battery.js';
+
+import { weather } from './weather.js';
+import systemInfoWidget from './systemInfo.js';
+import wellKnow from './wellKnow.js';
+
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js'
-import { find_icon } from '../../lib/iconUtils.js'
 
-const leftWideges = (avg_row_px, desk_widget_spacing) => {
-
+const leftWideges = ( desk_widget_spacing) => {
   const row_1 = Widget.Box({
-    className: 'f-row1',
     spacing: desk_widget_spacing,
-    // homogeneous: true,
-    children: [
-      clock(avg_row_px),
-      battery(avg_row_px)
-    ]
-  })
-
-  const mainWrap = Widget.Box({
-    className: 'f-desk-left',
+    homogeneous:true,
     vpack: 'fill',
     hpack: 'fill',
+    setup:(self)=>{
+      Utils.timeout(500,()=>{
+       const width = self.get_allocated_width();
+       const avagRow=  (width - desk_widget_spacing) / 4 
+       self.children =[
+          weather(avagRow)
+       ]
+      })
+    },
+  })
+
+ const row_2 = Widget.Box({
+    spacing: desk_widget_spacing,
+    vpack: 'fill',
+    hpack: 'fill',
+    setup:(self)=>{
+      Utils.timeout(500,()=>{
+       const width = self.get_allocated_width();
+       const avagRow= Math.floor( (width - desk_widget_spacing) / 4) 
+       self.children =[
+          wellKnow(avagRow),
+          systemInfoWidget(avagRow)
+       ]
+      })
+    },
+  })
+  
+
+  const mainWrap = Widget.Box({
+    spacing:desk_widget_spacing,
+    vpack: 'fill',
     vertical: true,
-    spacing: 20,
+    homogeneous:true,
     children: [
       row_1,
+      row_2
     ],
   })
   return mainWrap

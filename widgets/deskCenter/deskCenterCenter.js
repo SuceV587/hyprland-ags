@@ -1,45 +1,61 @@
-import Widget from 'resource:///com/github/Aylur/ags/widget.js';
-import { dateWidget } from './date.js'
-import { calendar } from './calendar.js'
-
-import { clock } from './clock.js';
-import { battery } from './battery.js'
-import monitors from '../../lib/monitors.js';
-import Bluetooth from 'resource:///com/github/Aylur/ags/service/bluetooth.js';
-import Battery from 'resource:///com/github/Aylur/ags/service/battery.js';
-import * as Utils from 'resource:///com/github/Aylur/ags/utils.js'
-import { find_icon } from '../../lib/iconUtils.js'
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
+import { dateWidget } from "./date.js";
+import { calendar } from "./calendar.js";
+import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
+import todo from "./todo.js";
+import music from "./music.js"
 
 
-
-
-const centerWidgets = (avg_row_px, desk_widget_spacing) => {
-
+const centerWidgets = (desk_widget_spacing) => {
   //第一列
   const row_1 = Widget.Box({
-    className: 'f-row1',
+    className: "f-row1",
     spacing: desk_widget_spacing,
-    vpack: 'fill',
-    hpack: 'fill',
-    // homogeneous: true,
-    children: [
-      dateWidget(avg_row_px),
-      calendar(avg_row_px)
-    ]
-  })
+    vpack: "fill",
+    hpack: "fill",
+    setup: (self) => {
+      Utils.timeout(500, () => {
+        const width = self.get_allocated_width();
+        const avagRow = Math.floor((width - desk_widget_spacing) / 4);
+        self.children = [
+          dateWidget(avagRow),
+          calendar(avagRow),
+        ];
+      });
+    },
+  });
+
+  const row_2 = Widget.Box({
+    className: "f-row1",
+    spacing: desk_widget_spacing,
+    vpack: "fill",
+    hpack: "fill",
+    setup: (self) => {
+      Utils.timeout(500, () => {
+        const width = self.get_allocated_width();
+        const avagRow = Math.floor((width - desk_widget_spacing) / 4);
+        self.children = [
+          todo(avagRow),
+          music(avagRow)
+        ];
+      });
+    },
+  });
 
   const mainWrap = Widget.Box({
-    className: 'f-desk-center',
-    css: `min-width:${avg_row_px * 8}px`,
-    vpack: 'fill',
-    hpack: 'fill',
+    className: "f-desk-center",
+    // css: `min-width:${avg_row_px * 8}px`,
+    homogeneous: true,
+    vpack: "fill",
+    hpack: "fill",
     vertical: true,
-    spacing: 20,
+    spacing: desk_widget_spacing,
     children: [
       row_1,
+      row_2,
     ],
-  })
-  return mainWrap
-}
+  });
+  return mainWrap;
+};
 
-export default centerWidgets
+export default centerWidgets;

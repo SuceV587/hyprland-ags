@@ -1,6 +1,4 @@
 .f-clock-widget{
-  min-width:10rem;
-  min-height:10rem;
   background-color:rgba(0,0,0,0.8);
   border-radius:1.5rem;
 }
@@ -8,8 +6,6 @@
 .f-battery{
   background-color: rgba(232,232,232,0.8);
   border-radius:1.5rem;
-  padding-right:1rem;
-  padding-left:1rem;
 }
 
 

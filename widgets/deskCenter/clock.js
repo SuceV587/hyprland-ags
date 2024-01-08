@@ -9,7 +9,6 @@ const Cairo = imports.cairo
 
 
 const ClockWidget = (props) => Widget.DrawingArea({
-  className: 'f-bg-graph',
   properties: [
     ['update', (area) => {
       area.connect('draw', Lang.bind(area, (area, cr) => {
@@ -72,7 +71,6 @@ const ClockWidget = (props) => Widget.DrawingArea({
         }
 
 
-
         let timeStamp = styleContext.get_property('font-size', Gtk.StateFlags.NORMAL)
         let times = new Date()
         if (timeStamp >= 10000000) {
@@ -121,12 +119,12 @@ const ClockWidget = (props) => Widget.DrawingArea({
 export const clock = (avg_row_px) => {
   const widget = Widget.Box({
     className: 'f-clock-widget',
-    css: `min-width:${avg_row_px * 1.5}px;min-height:${avg_row_px * 1.5}px`,
+    css: `min-width:${avg_row_px}px;min-height:${avg_row_px}px`,
     homogeneous: true,
     children: [
       Widget.Box({
         homogeneous: true,
-        css: 'margin:1.3rem',
+        css: 'padding:20px',
         children: [
           ClockWidget()
         ]
