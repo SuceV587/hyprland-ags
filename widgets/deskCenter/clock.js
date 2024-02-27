@@ -9,8 +9,8 @@ const Cairo = imports.cairo
 
 
 const ClockWidget = (props) => Widget.DrawingArea({
-  properties: [
-    ['update', (area) => {
+  attribute: {
+    'update': (area) => {
       area.connect('draw', Lang.bind(area, (area, cr) => {
         const styleContext = area.get_style_context();
         const cx = Math.round(Math.max(styleContext.get_property('min-width', Gtk.StateFlags.NORMAL), area.get_allocated_width()) / 2);
@@ -104,15 +104,15 @@ const ClockWidget = (props) => Widget.DrawingArea({
         cr.setLineWidth(2);
         cr.stroke();
       }))
-    }]
-  ],
-  setup: (box) => {
-    box._update(box)
+    }
   },
-  connections: [[1000, self => {
-    const nowTime = new Date().getTime()
-    self.css = `font-size: ${nowTime}px;`
-  }]],
+  setup: (box) => {
+    box.attribute.update(box)
+  },
+}).poll(1000, self => {
+
+  const nowTime = new Date().getTime()
+  self.css = `font-size: ${nowTime}px;`
 });
 
 

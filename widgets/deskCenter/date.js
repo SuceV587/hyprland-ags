@@ -9,21 +9,16 @@ export const dateWidget = (avg_row_px) => {
   const row_height = avg_row_px;
 
   const top_part = Widget.Box({
-    css: `background-color:#ff5a5d;color:#fff;min-height:${
-      row_height * 1 / 4
-    }px;border-top-left-radius:1.5rem;border-top-right-radius:1.5rem`,
+    css: `background-color:#ff5a5d;color:#fff;min-height:${row_height * 1 / 4}px;border-top-left-radius:1.5rem;border-top-right-radius:1.5rem`,
     vertical: true,
     children: [
       Widget.Label({
-        css: `font-size:1.2rem;font-weight:800`,
+        css: `font-size:20px;font-weight:800`,
         setup: (self) =>
           Utils.timeout(1, () => {
             const styleContext = self.get_parent().get_style_context();
-            const height = styleContext.get_property(
-              "min-height",
-              Gtk.StateFlags.NORMAL,
-            );
-            self.setCss(`min-height:${height}px`);
+            const height = styleContext.get_property("min-height",Gtk.StateFlags.NORMAL,);
+            self.setCss(`min-height:${height}px;font-size:1.1rem;font-weight:800`);
 
             // 获取当前年份
             const currentDate = new Date();
@@ -48,7 +43,7 @@ export const dateWidget = (avg_row_px) => {
               "min-height",
               Gtk.StateFlags.NORMAL,
             );
-            self.setCss(`min-height:${height}px`);
+            self.setCss(`min-height:${height}px;font-size:2.8rem;font-weight:800;color:#000`);
 
             const currentDate = new Date();
             // 获取当前日期

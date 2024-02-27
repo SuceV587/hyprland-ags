@@ -35,13 +35,14 @@ const clientInfoWidget = () => {
       connections: [
         [Hyprland.active.client, (self) => {
           const appClass = Hyprland.active.client.class.toLowerCase();
+          const title=Hyprland.active.client.title
           if (!appClass) {
             return;
           }
           if (ignoreAppsClass.indexOf(appClass) !== -1) {
             return;
           }
-          self.icon = getClientIcon(appClass);
+          self.icon = getClientIcon(appClass,title);
         }],
       ],
     }),
@@ -50,10 +51,10 @@ const clientInfoWidget = () => {
   //显示当前workspace打开了多少个窗口
   const clientStatusClientNums = Widget.Label({
     css:
-      "background-color:#2aae67;color:#fff;border-radius:10rem;padding-left:0.7rem;padding-right:0.7rem",
+      "background-color:#2aae67;color:#fff;border-radius:30px;padding-left:0.7rem;padding-right:0.7rem",
     label: "",
-    properties: [
-      ["update", (self) => {
+    attribute: {
+      "update": (self) => {
         const workspaceId = Hyprland.active.workspace.id;
         const clients = Hyprland.clients;
         let nums = 0;
@@ -74,18 +75,18 @@ const clientInfoWidget = () => {
         if (nums > 1) {
           self.label = "+" + nums;
           self.setCss(
-            "background-color:#2aae67;padding-left:0.7rem;padding-right:0.7rem",
+            "background-color:#2aae67;padding-left:0.7rem;border-radius:30px;padding-right:0.7rem",
           );
         } else {
           self.label = "";
           self.setCss("background-color:transparent");
         }
-      }],
-    ],
+      },
+    },
     connections: [
-      [Hyprland, (self) => self._update(self), "client-added"],
-      [Hyprland, (self) => self._update(self), "client-removed"],
-      [Hyprland.active.workspace, (self) => self._update(self)],
+      [Hyprland, (self) => self.attribute.update(self), "client-added"],
+      [Hyprland, (self) => self.attribute.update(self), "client-removed"],
+      [Hyprland.active.workspace, (self) => self.attribute.update(self)],
     ],
   });
 
@@ -104,11 +105,11 @@ const clientInfoWidget = () => {
           if (item.address === appAddress) {
             if (item.floating) {
               self.setCss(
-                "background-color:#2aae67;padding-left:0.7rem;padding-right:0.7rem",
+                "background-color:#2aae67;border-radius:10rem;padding-left:0.7rem;padding-right:0.7rem",
               );
             } else {
               self.setCss(
-                "background-color:#666666;padding-left:0.7rem;padding-right:0.7rem",
+                "background-color:#666666;border-radius:10rem;padding-left:0.7rem;padding-right:0.7rem",
               );
             }
           }
@@ -142,8 +143,8 @@ const clientInfoWidget = () => {
     vpack: "center",
     hpack: "center",
     spacing: 7,
-    properties: [
-      ["update", (self) => {
+    attribute: {
+      "update": (self) => {
         const workspace = Hyprland.active.workspace;
         const childs = self.children;
         childs.map((item, index) => {
@@ -153,8 +154,8 @@ const clientInfoWidget = () => {
             item.setCss(workspaceDotCss["noActive"]);
           }
         });
-      }],
-    ],
+      },
+    },
     setup: (self) => {
       const childs = [];
       const nums = 7;
@@ -165,7 +166,7 @@ const clientInfoWidget = () => {
       self.children = childs;
     },
     connections: [
-      [Hyprland.active.workspace, (self) => self._update(self)],
+      [Hyprland.active.workspace, (self) => self.attribute.update(self)],
     ],
   });
 

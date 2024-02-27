@@ -22,7 +22,7 @@ export const calendar = (avg_row_px) => {
               "min-height",
               Gtk.StateFlags.NORMAL,
             );
-            self.setCss(`min-height:${height}px`);
+            self.setCss(`min-height:${height}px;font-size:1rem;color:#ff5a5d;font-weight:800`);
 
             const currentDate = new Date();
             const currentYear = currentDate.getFullYear();
@@ -60,9 +60,7 @@ export const calendar = (avg_row_px) => {
       homogeneous: true,
       vpack: "fill",
       hpack: "fill",
-      css: `min-height:${
-        row_height * 3 / 28 - 5
-      }px;font-size:0.8rem;font-weight:600;color:#333;`,
+      css: `min-height:${row_height * 3 / 28 - 5}px;font-size:0.8rem;font-weight:600;color:#333;`,
       setup: (self) => {
         const childArr = [];
         weeks.map((oneday) => {
@@ -78,7 +76,7 @@ export const calendar = (avg_row_px) => {
             label:dayTxt,
             setup: (self) => {
               if (oneday.day == currentDay && oneday.month === currentMonth) {
-                self.setCss("color:#ff5a5d;font-size:0.8rem;");
+                self.setCss("color:#ff5a5d;font-size:0.8rem;font-weight:600;");
               }
             },
           });

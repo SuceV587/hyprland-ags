@@ -9,31 +9,31 @@ const notificationTop = (monitor) => {
   const mainBox = Widget.Box({
     vertical: true,
     className: 'f-notification-popup',
-    properties: [
-      ['map', new Map()],
-      ['dismiss', (box, id, force = false) => {
+    attribute: {
+      'map': new Map(),
+      'dismiss': (box, id, force = false) => {
         //如果当前状态是hover,则不消失
-        if (!id || !box._map.has(id) || box._map.get(id)._hovered && !force) {
+        if (!id || !box.attribute.map.has(id) || box.attribute.map.get(id)._hovered && !force) {
           return;
         }
 
-        const notif = box._map.get(id);
+        const notif = box.attribute.map.get(id);
         Utils.timeout(5000, () => {
           if (notif._destroyed) {
             return
           }
           notif.revealChild = false;
         });
-      }],
+      },
 
-      ['notify', (box, id) => {
+      'notify': (box, id) => {
         if (!id || Notifications.dnd)
           return;
 
         if (!Notifications.getNotification(id))
           return;
 
-        box._map.delete(id);
+        box.attribute.map.delete(id);
 
         const notificationContent = Notifications.getNotification(id);
         const notificationWidget = NotificationWidget({
@@ -41,9 +41,9 @@ const notificationTop = (monitor) => {
           isPopup: true,
         })
 
-        box._map.set(id, notificationWidget);
+        box.attribute.map.set(id, notificationWidget);
 
-        box.children = Array.from(box._map.values()).reverse();
+        box.children = Array.from(box.attribute.map.values()).reverse();
 
         Utils.timeout(10, () => {
           if (notificationWidget._destroyed) {
@@ -53,8 +53,8 @@ const notificationTop = (monitor) => {
           notificationWidget.revealChild = true;
         });
 
-        box._map.get(id).interval = Utils.interval(4500, () => {
-          const notif = box._map.get(id);
+        box.attribute.map.get(id).interval = Utils.interval(4500, () => {
+          const notif = box.attribute.map.get(id);
           if (!notif._hovered) {
             if (notif.interval) {
               // Utils.timeout(500, () => notif.destroy());
@@ -63,12 +63,12 @@ const notificationTop = (monitor) => {
             }
           }
         });
-      }],
-    ],
+      },
+    },
     connections: [
-      [Notifications, (box, id) => box._notify(box, id), 'notified'],
-      [Notifications, (box, id) => box._dismiss(box, id), 'dismissed'],
-      [Notifications, (box, id) => box._dismiss(box, id, true), 'closed'],
+      [Notifications, (box, id) => box.attribute.notify(box, id), 'notified'],
+      [Notifications, (box, id) => box.attribute.dismiss(box, id), 'dismissed'],
+      [Notifications, (box, id) => box.attribute.dismiss(box, id, true), 'closed'],
     ],
   });
 

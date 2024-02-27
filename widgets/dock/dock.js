@@ -7,20 +7,16 @@ import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
 import Applications from "resource:///com/github/Aylur/ags/service/applications.js";
 const { execAsync, exec } = Utils;
 const { Box, EventBox, Label, Revealer, Overlay } = Widget;
-import { find_icon } from "../../lib/iconUtils.js";
 import { setupCursorHover } from "../../lib/cursorhover.js";
-import {
-  getClientByAdrees,
-  getFullScreenClientAddress,
-} from "../../lib/client.js";
-import { ignoreAppsClass } from "../../lib/client.js";
+import {getClientByAdrees,getFullScreenClientAddress,} from "../../lib/client.js";
+import { ignoreAppsClass,getClientIcon,clientMapWorkSpace ,focus } from "../../lib/client.js";
 
 const ANIMATION_TIME = 150;
 const pinnedApps = [
   "org.gnome.Nautilus",
 ];
 
-const clientMapWorkSpace = {};
+
 
 function substitute(str) {
   const subs = [
@@ -42,45 +38,6 @@ function substitute(str) {
   return str;
 }
 
-const focus = (client) => {
-  //这里的client的状态并不是最新的
-  const { address } = client;
-  const liveClient = getClientByAdrees(address);
-
-  //如果当前在special的window里面,则移出来
-  if (liveClient.workspace.id < 0) {
-    const oldWorkSpace = clientMapWorkSpace[address];
-    if (oldWorkSpace) {
-      Utils.exec(
-        `hyprctl dispatch movetoworkspace ${oldWorkSpace},address:${address}`,
-      );
-      Utils.exec(`hyprctl dispatch workspace ${oldWorkSpace}`);
-    }
-  }
-
-  //如果当前已经是fullscreen的,不发生变化
-  if (liveClient.fullscreen) {
-    Utils.exec("hyprctl dispatch focuswindow address:" + address);
-    return;
-  }
-
-  //获取当前workspace里面是否有设置fullscreen的client
-  const currentFullScreenAddress = getFullScreenClientAddress(
-    liveClient.workspace.id,
-  );
-  if (currentFullScreenAddress) {
-    const fullScreenAdress = currentFullScreenAddress.address;
-    Utils.exec("hyprctl dispatch focuswindow address:" + fullScreenAdress);
-    Utils.exec("hyprctl dispatch fullscreen 1");
-  }
-
-  Utils.exec("hyprctl dispatch focuswindow address:" + address);
-  // Utils.exec('hyprctl dispatch cyclenext')
-  Utils.exec("hyprctl dispatch alterzorder top,address:" + address);
-  if (currentFullScreenAddress) {
-    Utils.exec("hyprctl dispatch fullscreen 1");
-  }
-};
 
 const DockSeparator = (props = {}) =>
   Box({
@@ -90,9 +47,9 @@ const DockSeparator = (props = {}) =>
 
 const AppButton = ({ icon, address, ...rest }) =>
   Widget.Revealer({
-    properties: [
-      ["workspace", 0],
-    ],
+    attribute: {
+      "workspace": 0,
+    },
     revealChild: false,
     transition: "slide_right",
     transitionDuration: 500,
@@ -106,14 +63,18 @@ const AppButton = ({ icon, address, ...rest }) =>
             className: "dock-app-icon-box",
             child: Widget.Icon({
               className: "dock-app-icon",
-              properties: [
-                ["address", address],
-              ],
+              attribute: {
+                "address": address,
+              },
               icon: icon,
               setup: (self) =>
                 Utils.timeout(1, () => {
-                  if (self._destroyed) {
+                  if (self._destroyed ) {
                     return;
+                  }
+
+                  if(!self.get_parent){
+                    return
                   }
                   const styleContext = self.get_parent().get_style_context();
                   const width = styleContext.get_property(
@@ -128,13 +89,12 @@ const AppButton = ({ icon, address, ...rest }) =>
                 }),
               connections: [
                 [Hyprland.active.client, (self) => {
-                  const appClass = substitute(Hyprland.active.client.class)
-                    .toLowerCase();
+                  const appClass = substitute(Hyprland.active.client.class).toLowerCase();
                   if (ignoreAppsClass.indexOf(appClass.toLowerCase()) !== -1) {
                     return;
                   }
 
-                  if (self._address === Hyprland.active.client._address) {
+                  if (self.attribute.address === Hyprland.active.client._address) {
                     self.setCss(`background-color:rgba(255,255,255,0.7)`);
                   } else {
                     self.setCss(`background-color:transparent`);
@@ -151,32 +111,20 @@ const AppButton = ({ icon, address, ...rest }) =>
     }),
   });
 
-const find_icon_path = function (appClass) {
-  appClass = appClass.replace(" ", "_");
-
-  if (find_icon(appClass)) {
-    return find_icon(appClass);
-  }
-
-  if (find_icon("system")) {
-    return find_icon("system");
-  }
-
-  return appClass;
-};
 
 const Taskbar = () =>
   Widget.Box({
     className: "dock-apps",
-    properties: [
-      ["map", new Map()],
-      ["clientSortFunc", (a, b) => {
+    attribute: {
+      "map": new Map(),
+      "clientSortFunc": (a, b) => {
         return a._workspace > b._workspace;
-      }],
-      ["update", (box) => {
+      },
+      "update": (box) => {
         Hyprland.clients.forEach((client) => {
           if (client["pid"] == -1) return;
-          const appClass = substitute(client.class).toLowerCase();
+         let appClass = substitute(client.class).toLowerCase();
+
           for (const appName of pinnedApps) {
             if (appClass.includes(appName.toLowerCase())) {
               return null;
@@ -184,46 +132,47 @@ const Taskbar = () =>
           }
 
           const newButton = AppButton({
-            icon: find_icon_path(appClass),
+            icon: getClientIcon(appClass,client.title),
             address: client.address,
             tooltipText: `${client.title} (${appClass})`,
             onClicked: () => focus(client),
           });
           newButton._workspace = client.workspace.id;
           newButton.revealChild = true;
-          box._map.set(client.address, newButton);
+          box.attribute.map.set(client.address, newButton);
         });
-        box.children = Array.from(box._map.values());
-      }],
-      ["add", (box, address) => {
+        box.children = Array.from(box.attribute.map.values());
+      },
+      "add": (box, address) => {
         if (!address) { // Since the first active emit is undefined
-          box._update(box);
+          box.attribute.update(box);
           return;
         }
         const newClient = Hyprland.clients.find((client) => {
           return client.address == address;
         });
-        const appClass = substitute(newClient.class).toLowerCase();
+         let appClass = substitute(newClient.class).toLowerCase();
+
 
         if (ignoreAppsClass.indexOf(appClass.toLowerCase()) !== -1) {
           return;
         }
 
         const newButton = AppButton({
-          icon: find_icon_path(appClass),
+          icon: getClientIcon(appClass,newClient.title),
           address: newClient.address,
           tooltipText: `${newClient.title} (${appClass})`,
           onClicked: () => focus(newClient),
         });
         newButton._workspace = newClient.workspace.id;
-        box._map.set(address, newButton);
-        box.children = Array.from(box._map.values());
+        box.attribute.map.set(address, newButton);
+        box.children = Array.from(box.attribute.map.values());
         newButton.revealChild = true;
-      }],
-      ["remove", (box, address) => {
+      },
+      "remove": (box, address) => {
         if (!address) return;
 
-        const removedButton = box._map.get(address);
+        const removedButton = box.attribute.map.get(address);
 
         //如果为空,则不处理
         if (!removedButton) {
@@ -234,11 +183,11 @@ const Taskbar = () =>
 
         Utils.timeout(ANIMATION_TIME, () => {
           removedButton.destroy();
-          box._map.delete(address);
-          box.children = Array.from(box._map.values());
+          box.attribute.map.delete(address);
+          box.children = Array.from(box.attribute.map.values());
         });
-      }],
-    ],
+      },
+    },
     connections: [
       [Hyprland.active, () => {
         const address = Hyprland.active.client.address;
@@ -248,15 +197,15 @@ const Taskbar = () =>
         }
         clientMapWorkSpace[address] = workspace;
       }],
-      [Hyprland, (box, address) => box._add(box, address), "client-added"],
-      [Hyprland, (box, address) => box._remove(box, address), "client-removed"],
+      [Hyprland, (box, address) => box.attribute.add(box, address), "client-added"],
+      [Hyprland, (box, address) => box.attribute.remove(box, address), "client-removed"],
     ],
     setup: (self) => {
       Utils.timeout(100, () => {
         if (self._destroyed) {
           return;
         }
-        return self._update(self);
+        return self.attribute.update(self);
       });
     },
   });
@@ -271,7 +220,7 @@ const PinnedApps = () =>
         .filter(({ app }) => app)
         .map(({ app, term = true }) => {
           const newButton = AppButton({
-            icon: find_icon_path(app.icon_name),
+            icon: getClientIcon(app.icon_name),
             address: "",
             onClicked: () => {
               for (const client of Hyprland.clients) {
@@ -344,8 +293,8 @@ export default () => {
       ["child2", dock2],
     ],
     shown: "child1",
-    properties: [
-      ["update", (self, id, monitor) => {
+    attribute: {
+      "update": (self, id, monitor) => {
           if (monitor != "HDMI-A-1") {
             return;
           }
@@ -359,13 +308,13 @@ export default () => {
             dock1.reveal_child = false;
             self.shown = "child2";
           }
-      }],
-    ],
+      },
+    },
     connections: [
       [Hyprland.active.workspace, (self) => {
         const id = Hyprland.active.workspace.id;
         const monitor = Hyprland.active.monitor.name;
-        self._update(self, id, monitor);
+        self.attribute.update(self, id, monitor);
       }],
     ],
   });

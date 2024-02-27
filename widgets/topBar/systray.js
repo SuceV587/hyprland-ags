@@ -27,34 +27,34 @@ export const Tray = (props = {}) => {
   const trayContent = Box({
     vpack: 'center',
     className: 'u-systray',
-    properties: [
-      ['items', new Map()],
-      ['onAdded', (box, id) => {
+    attribute: {
+      'items': new Map(),
+      'onAdded': (box, id) => {
         const item = SystemTray.getItem(id);
         if (!item) return;
         item.menu.className = 'menu';
-        if (box._items.has(id) || !item)
+        if (box.attribute.items.has(id) || !item)
           return;
         const widget = SysTrayItem(item);
-        box._items.set(id, widget);
+        box.attribute.items.set(id, widget);
         box.pack_start(widget, false, false, 0);
         box.show_all();
-        if (box._items.size === 1)
+        if (box.attribute.items.size === 1)
           trayRevealer.revealChild = true;
-      }],
-      ['onRemoved', (box, id) => {
-        if (!box._items.has(id))
+      },
+      'onRemoved': (box, id) => {
+        if (!box.attribute.items.has(id))
           return;
 
-        box._items.get(id).destroy();
-        box._items.delete(id);
-        if (box._items.size === 0)
+        box.attribute.items.get(id).destroy();
+        box.attribute.items.delete(id);
+        if (box.attribute.items.size === 0)
           trayRevealer.revealChild = false;
-      }],
-    ],
+      },
+    },
     connections: [
-      [SystemTray, (box, id) => box._onAdded(box, id), 'added'],
-      [SystemTray, (box, id) => box._onRemoved(box, id), 'removed'],
+      [SystemTray, (box, id) => box.attribute.onAdded(box, id), 'added'],
+      [SystemTray, (box, id) => box.attribute.onRemoved(box, id), 'removed'],
     ],
   });
   const trayRevealer = Widget.Revealer({

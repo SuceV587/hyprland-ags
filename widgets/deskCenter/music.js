@@ -1,21 +1,30 @@
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import Mpris from "resource:///com/github/Aylur/ags/service/mpris.js";
 import App from "resource:///com/github/Aylur/ags/app.js";
+import {setupCursorHover} from "../../lib/cursorhover.js"
 
 const defaultCoverPath = `${App.configDir}/assets/cover.jpg`
 let progressBarVal = 0
 
 const computeNowPlayer = (players) => {
+
+  const defautPlayer={ "cover-path": defaultCoverPath }
+
   if (players.length === 1) {
     return players[0];
   } else if (players.length > 1) {
     //循环出can palyer的
     const player = players.find((item) => {
-      return item["can-play"];
+      return item["can-play"] && item['play-back-status'] !='Stopped' &&item['play-back-status'] !='Paused';
     });
+
+    if(!player){
+      return defautPlayer
+    }
+
     return player;
   } else {
-    return { "cover-path": defaultCoverPath };
+    return defautPlayer
   }
 };
 
@@ -62,7 +71,7 @@ const author = () => {
 
   authorLabel.hook(Mpris, (self) => {
     const player = computeNowPlayer(Mpris.players);
-    const title_txt = player["track-artists"].join("") || "未播放";
+    const title_txt = player["track-artists"]? player["track-artists"].join("") : "未播放";
     self.label = title_txt;
   }, "changed");
 
@@ -100,7 +109,6 @@ const title = () => {
 
 //播放或者暂停
 const playOrPause = () =>{
-
   //播放或者暂停
   let play_icon = `${App.configDir}/assets/play.png`;
   let pause_icon= `${App.configDir}/assets/pause.png`;
@@ -112,6 +120,11 @@ const playOrPause = () =>{
   
   playOrPauseWidget.hook(Mpris, (self) => {
     const player = computeNowPlayer(Mpris.players);
+    if(!player){
+      self.icon =play_icon
+      return
+    }
+
     if(player['play-back-status'] === 'Playing'){
       self.icon = pause_icon
     }else{
@@ -129,26 +142,57 @@ const playOrPause = () =>{
       }else{
         player.play()
       }
-    }
+    },
+    setup: (button) => {
+      setupCursorHover(button);
+    },
   })
   return widget
-
 }
 
-const handle = (avg_row_px) => {
-  let prev_icon = `${App.configDir}/assets/prev.png`;
-  const prev = Widget.Icon({
-    icon: prev_icon,
-    size: 42,
-  });
-
-  let next_icon = `${App.configDir}/assets/next.png`;
+const next  = () =>{
   const next = Widget.Icon({
-    icon: next_icon,
+    icon: `${App.configDir}/assets/next.png`,
     size: 42,
   });
 
+  const widget = Widget.Button({
+    css:'background-color:transparent;background-image:none;border:0;box-shadow:none',
+    child:next,
+    onClicked:()=>{
+      const player = computeNowPlayer(Mpris.players);
+      player.next()
+    },
+    setup: (button) => {
+      setupCursorHover(button);
+    },
+  })
+  return widget
+}
 
+
+const prev  = () =>{
+  const prev = Widget.Icon({
+    icon: `${App.configDir}/assets/prev.png`,
+    size: 42,
+  });
+
+  const widget = Widget.Button({
+    css:'background-color:transparent;background-image:none;border:0;box-shadow:none',
+    child:prev,
+    onClicked:()=>{
+      const player = computeNowPlayer(Mpris.players);
+      player.previous()
+    },
+    setup: (button) => {
+      setupCursorHover(button);
+    },
+  })
+  return widget
+}
+
+
+const handle = (avg_row_px) => {
 
   const widget = Widget.Box({
     // css:`background-color:#000`,
@@ -156,9 +200,9 @@ const handle = (avg_row_px) => {
     hpack: "center",
     homogeneous: true,
     children: [
-      prev,
+      prev(),
       playOrPause(),
-      next,
+      next(),
     ],
   });
   return widget;
@@ -248,13 +292,11 @@ const statusTime = ()=>{
         progressBarVal =   (nowTimeStr/total).toFixed(3)
       }else{
         nowTimeStr = 0 
-        progressBarVal = 0
+        progressBarVal =0
       }
       self.label = formatTime(nowTimeStr)
     }, 1000)
   }, "changed");
-
-  
 
   const statusTimeWidget = Widget.Box({
     css:'min-height:0.3rem;margin-top:0.2rem',

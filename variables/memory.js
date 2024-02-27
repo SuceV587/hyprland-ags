@@ -13,7 +13,5 @@ const meoryUse = Variable("10", {
     }],
 });
 
-// sh -c
-//      "LANG=c free -m | grep 'Mem:' | awk '{printf \"%d@@%d@\", $7, $2}'"
 
 export default meoryUse;

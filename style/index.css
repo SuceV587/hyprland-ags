@@ -1,4 +1,8 @@
 
+window{
+  background-color: transparent;
+}
+
 /**顶部的bar**/
 @import url('./topBar.css');
 @import url('./corner.css');

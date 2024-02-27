@@ -9,6 +9,5 @@ export default (monitor) => Widget.Window({
   anchor: ['bottom'],
   margins: [10, 0, 10, 0],
   exclusivity: 'exclusive',
-  visible: true,
   child: Dock(),
 });

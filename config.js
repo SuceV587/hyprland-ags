@@ -5,6 +5,7 @@ import Dock from "./widgets/dock/index.js";
 import notificationTop from './widgets/notification/notificationTop.js';
 import Monitors from './lib/monitors.js'
 import deskCenter from './widgets/deskCenter/index.js'
+import  runApps from './widgets/runApps/index.js'
 
 //定义主屏幕的id
 const mainMonitorId = Monitors.mainMonitorId
@@ -16,6 +17,7 @@ export default {
     topBar(mainMonitorId),
     Dock(mainMonitorId),
     notificationTop(mainMonitorId),
-    deskCenter(mainMonitorId)
+    deskCenter(mainMonitorId),
+    runApps(mainMonitorId)
   ]
 }

@@ -11,48 +11,44 @@ import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js'
 const wifi_widget = Widget.Label({
   className: 'font',
   css: 'margin-right:1rem',
-  properties: [
-    ['update', (box) => {
+  attribute: {
+    'update': (box) => {
       const network = Network.wifi
       box.label = '  ' + network.strength + '%'
-    }]
-  ],
-  //10s更新一下电池电量
-  connections: [[10000, self => {
-    self._update(self)
-  }]],
+    }
+  },
+}).poll(10000, self => {
+  self.attribute.update(self)
 })
 
 
 const volumn_widget = Widget.Label({
   className: 'font',
   css: 'margin-right:1rem',
-  properties: [
-    ['update', (box) => {
+  attribute: {
+    'update': (box) => {
       const audio = Audio.microphone
       if (!audio) {
         return
       }
       box.label = '  ' + Math.round(audio.volume * 100) + '%'
-    }]
-  ],
-  //10s更新一下电池电量
-  connections: [[10000, self => {
-    self._update(self)
-  }]],
+    }
+  },
   setup: (self) => {
     Utils.timeout(1000, () => {
-      self._update(self)
+      self.attribute.update(self)
     });
   }
+}).poll(10000, self => {
+  self.attribute.update(self)
 })
 
 
 const battery_widget = Widget.Label({
   className: 'font',
   css: 'margin-right:1rem',
-  properties: [
-    ['update', (box) => {
+  attribute: {
+    'update': (box) => {
       const battery = Battery.percent
       if (!battery) {
         return
@@ -69,39 +65,32 @@ const battery_widget = Widget.Label({
         icon = ' '
       }
       box.label = icon + ' ' + battery + '%'
-    }]
-  ],
-  //10s更新一下电池电量
-  connections: [[10000, self => {
-    self._update(self)
-  }]],
+    }
+  },
   setup: (self) => {
     Utils.timeout(1000, () => {
-      self._update(self)
+      self.attribute.update(self)
     });
   }
+}).poll(10000, self => {
+  self.attribute.update(self)
 })
 
 // 󰔄
 const temp = Widget.Label({
   className: 'font',
   css: 'margin-right:1rem',
-  properties: [
-    ['update', (box) => {
-
+  attribute: {
+    'update': (box) => {
       // execAsync([`bash`, `-c`, `hyprctl version | grep -oP "Tag: v\\K\\d+\\.\\d+\\.\\d+"`]).then(distro => {
       execAsync([`bash`, `-c`, `sensors | grep 'Tctl' | awk '{print $2}'`]).then(tmpStr => {
         const temp = tmpStr.replace('+', '')
         box.label = '  ' + temp
       })
-
-
-    }]
-  ],
-  //10s更新一下电池电量
-  connections: [[5000, self => {
-    self._update(self)
-  }]],
+    }
+  },
+}).poll(5000, self => {
+  self.attribute.update(self)
 })
 
 
