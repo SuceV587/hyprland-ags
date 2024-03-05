@@ -1,1 +1,1 @@
-![图片](https://github.com/SuceV587/hyprland-ags/assets/17897624/d976da04-a2de-4e87-b1b5-df9f3b182030)
+![图片](https://github.com/SuceV587/hyprland-ags/assets/17897624/03d17c33-bfe9-4ce8-a648-4c4cc9af324d)
