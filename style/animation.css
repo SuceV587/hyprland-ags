@@ -1,0 +1,101 @@
+@keyframes scaleBig {
+       0% {
+            min-width: 22rem; 
+            min-height:2rem;
+        }
+
+       15% {
+            min-width: 25rem; 
+            min-height:3rem;
+        }
+
+        30% {
+           min-width: 30rem; 
+           min-height:3.5rem;
+        }
+
+        45% {
+            min-width: 35rem; 
+            min-height:6rem;
+        }
+
+        60% {
+           min-width: 40rem;
+           min-height:7rem;
+        }
+
+        75% {
+            min-width: 45rem;
+            min-height:10rem;
+        }
+
+        90% {
+           min-width: 45rem; 
+           min-height:10rem;
+        }
+
+        100% {
+            min-width: 45rem;
+            min-height:10rem;
+        }
+}
+
+.scaleAdd {
+    animation: scaleBig 0.1s ease-in-out forwards; 
+}
+
+
+@keyframes scaleSmall {
+       0% {
+
+            min-width: 42rem;
+            min-height:8rem;
+
+        }
+
+       15% {
+
+           min-width: 43rem; 
+           min-height:8rem;
+        }
+
+        30% {
+
+            min-width: 42rem;
+            min-height:8rem;
+        }
+
+        45% {
+
+           min-width: 40rem;
+           min-height:7rem;
+        }
+
+
+        60% {
+
+            min-width: 35rem; 
+            min-height:6rem;
+        }
+
+        75% {
+
+           min-width: 30rem; 
+           min-height:3.5rem;
+        }
+
+        90% {
+
+            min-width: 25rem; 
+            min-height:3rem;
+        }
+
+        100% {
+            min-width: 23rem; 
+            min-height:2rem;
+        }
+}
+
+.scaleEase{
+  animation: scaleSmall .1s ease-in-out forwards
+}

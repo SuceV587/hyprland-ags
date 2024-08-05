@@ -1,0 +1,47 @@
+
+.dock-app-btn{
+  border:none;
+  box-shadow:none;
+  background-color:transparent;
+  background-image:none;
+  padding:0 0.5rem;
+}
+
+
+.dock-app-icon-box{
+  border:none;
+  background-color:transparent;
+  background-image:none;
+  min-width:5rem;
+  min-height: 5rem;
+}
+
+.dock-app-acive .dock-app-icon-box{
+  background-color:rgba(252,252,252,0.9);
+  border-radius:0.8rem;
+}
+
+.dock-app-icon{
+  background-color:transparent;
+  border-radius:1rem;
+}
+
+
+.u-dock-separator{
+  margin-top:0.5rem;
+  margin-bottom:0.5rem;
+  min-width:0.15rem;
+  background-color:rgba(232,232,232,0.4);
+  border-radius:999rem;
+}
+
+.f-dock-wrap-line{
+  /* background-color: rgba(232,232,232,0.8); */
+  /* background-color: rgba(0,0,0,0.5); */
+
+  /* background-color: rgba(0,0,0,0.5); */
+  background-color: rgba(220,220,220,0.7);
+  min-height:0.5rem;
+  min-width:60rem;
+  border-radius:9999rem;
+}

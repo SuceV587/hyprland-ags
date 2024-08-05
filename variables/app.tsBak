@@ -1,0 +1,261 @@
+import Variable from "resource:///com/github/Aylur/ags/variable.js";
+import applications from 'resource:///com/github/Aylur/ags/service/applications.js';
+import { makePages } from "../lib/applauncher.js"
+
+export const maxRows = 5
+export const maxColunms = 15
+
+let appsPageChace: any[][] = []
+
+const ignoreApps = [
+  "Neovim",
+  "ranger",
+  "Htop",
+  "btop++",
+  "CMake",
+  "OpenJDK Java 22 Console",
+  "OpenJDK Java 22 Shell",
+  "picom",
+  "Electron 26",
+  "Electron 28",
+  "Vim"
+
+]
+
+//制作一个空的app page
+export const makeEmptyPage = () => {
+  const colunm = Array(maxColunms).fill({ type: "sezieSeat" });
+  const emptyPage = Array(maxRows).fill(colunm)
+  return emptyPage
+}
+
+
+// 定义类型
+interface AppsVariableType<T> {
+  total: T[][];
+  list: T[];
+  totalPage: number;
+  page: number;
+};
+
+export const appsVariable = Variable<AppsVariableType<any>>({
+  total: [],
+  list: [],
+  totalPage: 0,
+  page: 1
+})
+
+export const hoverVarible = Variable({
+  column: 1,
+  row: 1
+});
+
+export const cacheAppsPage = <T>() => {
+  const newApps = applications.list
+  appsPageChace = makePages(newApps, maxRows, maxColunms, ignoreApps)
+  initApps()
+}
+
+//初始化
+export const initApps = () => {
+  appsVariable.setValue({ total: appsPageChace, list: appsPageChace[0] || [], totalPage: appsPageChace.length, page: 1 })
+  initHover()
+}
+
+export const initHover = () => {
+  hoverVarible.setValue({
+    column: 1, row: 1
+  })
+}
+
+export const search = (keyword = "") => {
+  if (keyword.length == 0) {
+    initApps()
+    return
+  }
+
+  if (keyword.length == 1) {
+    return
+  }
+
+
+  let newApps = applications.query(keyword)
+  const appsPage = makePages(newApps, maxRows, maxColunms, ignoreApps)
+  appsVariable.setValue({ total: appsPage, list: appsPage[0] || [], totalPage: appsPage.length || 0, page: 1 })
+  initHover()
+}
+
+
+const getCurrentHover = () => {
+  return {
+    column: hoverVarible.value.column,
+    row: hoverVarible.value.row,
+  }
+}
+
+const getCurrentPage = <T>() => {
+  const total = appsVariable.value.total
+  const totalPage = appsVariable.value.totalPage
+  let endMaxRow = 0
+  let endMaxColumn = 0
+
+  if (totalPage > 0) {
+    const endPage: T[][] = total[totalPage - 1] || []
+    endMaxRow = endPage.length
+    endMaxColumn = endPage[endMaxRow - 1].length
+  }
+
+  return {
+    total,
+    totalPage,
+    endMaxRow,
+    endMaxColumn,
+    current: appsVariable.value.page
+  }
+
+}
+
+export const moveRight = () => {
+  let { column, row } = getCurrentHover()
+  let { totalPage, current, total, endMaxColumn, endMaxRow } = getCurrentPage()
+
+  //跳到第一页的情况
+  if (current == totalPage && (column == maxColunms || column == endMaxColumn && row == endMaxRow)) {
+    return
+  } else if (column == maxColunms) {
+    if (row > endMaxRow) {
+      row = endMaxRow
+      column = 1
+      current = current + 1
+    } else {
+      column = 1
+      current = current + 1
+    }
+
+    appsVariable.setValue({
+      total,
+      list: total[current - 1],
+      totalPage: totalPage,
+      page: current
+    })
+
+  } else {
+    column = column + 1
+  }
+
+
+  hoverVarible.setValue({
+    column,
+    row,
+  })
+}
+
+
+export const moveLeft = () => {
+  let { column, row } = getCurrentHover()
+  let { totalPage, current, total } = getCurrentPage()
+
+  //需要翻页
+  if (column == 1) {
+    column = maxColunms
+    //第一页的第一列,不翻页
+    if (current == 1) {
+      return false
+    } else {
+      current = current - 1
+    }
+
+    appsVariable.setValue({
+      total,
+      list: total[current - 1],
+      totalPage: totalPage,
+      page: current
+    })
+
+  } else {
+    column = column - 1
+  }
+
+  hoverVarible.setValue({ column, row })
+}
+
+
+export const moveTop = () => {
+  let { column, row } = getCurrentHover()
+  let { total, current, totalPage, endMaxColumn, endMaxRow } = getCurrentPage()
+
+  endMaxColumn = current == totalPage ? endMaxColumn : maxColunms
+
+  if (row == 1 && column == 1) {
+    if (current == 1) {
+      return
+    } else {
+      current = current - 1
+      column = maxColunms
+      row = maxRows
+    }
+
+    appsVariable.setValue({
+      total,
+      list: total[current - 1],
+      totalPage: totalPage,
+      page: current
+    })
+
+  } else if (row == 1) {
+    column = column > endMaxColumn ? endMaxColumn : column - 1
+    row = current == totalPage ? endMaxRow : maxRows
+  } else {
+    row = row - 1
+  }
+
+  hoverVarible.setValue({
+    column,
+    row
+  })
+}
+
+
+export const moveBottom = () => {
+  let { column, row } = getCurrentHover()
+  let { totalPage, current, total, endMaxColumn, endMaxRow } = getCurrentPage()
+
+  endMaxRow = current == totalPage ? endMaxRow : maxRows
+  endMaxColumn = current == totalPage ? endMaxColumn : maxColunms
+
+  if (row == endMaxRow) {
+    if (column == endMaxColumn) {
+      if (current == totalPage) {
+        return
+      } else {
+        current = current + 1
+      }
+
+      row = 1
+      column = 1
+
+      appsVariable.setValue({
+        total,
+        list: total[current - 1],
+        totalPage: totalPage,
+        page: current
+      })
+
+    } else {
+      column = column + 1
+      row = 1
+    }
+  } else {
+    if (column > endMaxColumn) {
+      column = endMaxColumn
+      row = endMaxRow
+    } else {
+      row = row + 1
+    }
+  }
+
+  hoverVarible.setValue({
+    column,
+    row,
+  })
+}

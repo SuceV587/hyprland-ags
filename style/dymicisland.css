@@ -1,0 +1,18 @@
+.floatStatus{
+  color:#000;
+  padding-right:0.5rem;
+  padding-left:0.5rem;
+  font-weight:800;
+  font-size:0.8rem;
+  font-style:italic;
+  background:rgba(252,252,252,0.8);
+  border-radius:0.5rem;
+}
+.active{
+  background:#2aae67;
+  color:#fff;
+}
+
+.taskHover{
+  background-color:rgba(252,252,252,0.8)
+}
